@@ -4,3 +4,6 @@ SpeechRecognition
 pyttsx3
 openai
 langchain-groq
+python-dotenv
+requests
+git+https://github.com/langchain-ai/langchain-groq.git
