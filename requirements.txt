@@ -3,3 +3,4 @@ pymupdf
 SpeechRecognition
 pyttsx3
 openai
+langchain-groq
