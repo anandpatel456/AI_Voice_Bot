@@ -1,9 +1,8 @@
 streamlit
-pymupdf
+PyMuPDF
 SpeechRecognition
 pyttsx3
-openai
-langchain-groq
+pyaudio
 python-dotenv
-requests
-git+https://github.com/langchain-ai/langchain-groq.git
+langchain
+langchain-groq
