@@ -1,7 +1,5 @@
 streamlit
+pymupdf
+SpeechRecognition
+pyttsx3
 openai
-python-dotenv
-speechrecognition
-pyaudio
-PyMuPDF
-fitz
