@@ -5,4 +5,4 @@ pyttsx3
 pyaudio
 python-dotenv
 langchain
-langchain-groq
+langchain-groq==0.3.6
