@@ -1,8 +1,8 @@
 import streamlit as st
+import time
 from resume_parser import extract_text_from_pdf
 from voice_utils import speech_to_text, text_to_speech
 from chains.interview_chain import run_interview, generate_feedback
-import time
 
 st.set_page_config(page_title="AI Voice Interview Bot", layout="centered")
 st.title("🎤 AI Voice Interview Bot")
@@ -14,11 +14,11 @@ if uploaded_file:
     with st.spinner("📃 Extracting resume content..."):
         resume_text = extract_text_from_pdf(uploaded_file)
 
-    if st.button("🎙️ Start Interview"):
-        st.success("Interview Started! 🎧" \
-        "Say 'yes' to start interview")
+    st.success("✅ Resume uploaded succefully!")
 
-        # 🤖 Bot Introduction
+    if st.button("🎙️ Start Interview"):
+        st.success("Interview Started! 🎧 Say 'yes' to start")
+
         greeting = "Hello, I am your HR for today. I’ll be conducting your interview. Are you ready?"
         st.write(f"🧠 Bot: {greeting}")
         text_to_speech(greeting)
@@ -30,37 +30,50 @@ if uploaded_file:
             st.warning("Interview not started. Please restart and confirm readiness.")
         else:
             chat_history = []
-            question_count = 0
+            start_time = time.time()
+            general_count = 0
 
             while True:
-                question = run_interview(resume_text, chat_history, question_count)
+                elapsed = time.time() - start_time
+                if elapsed > 15 * 60:
+                    st.info("⏰ Interview time (15 minutes) is over.")
+                    break
+
+                # Determine category: 2 general, then alternate between technical/projects
+                if general_count < 2:
+                    category = "general"
+                    general_count += 1
+                else:
+                    category = "technical" if len(chat_history) % 2 == 0 else "projects"
+
+                # Ask question
+                question = run_interview(resume_text, chat_history, category)
                 st.write(f"🧠 Bot: {question}")
                 text_to_speech(question)
 
                 answer = speech_to_text()
                 st.write(f"🗣️ You: {answer}")
 
-                # --- STOP INTERVIEW if user says "stop" or "quit" --- #
                 if "quit" in answer.lower() or "stop" in answer.lower():
                     st.success("Interview ended by user.")
                     break
 
+                # Retry if unclear
                 if "sorry" in answer.lower() or not answer.strip():
-                    st.warning("Didn't catch that. Please try again.")
+                    st.warning("Didn't catch that. Please repeat.")
                     answer = speech_to_text()
                     st.write(f"🗣️ You (Retry): {answer}")
 
-                    # Check for stop/quit again on retry
                     if "quit" in answer.lower() or "stop" in answer.lower():
                         st.success("Interview ended by user.")
                         break
 
                 chat_history.append({"question": question, "answer": answer})
-                question_count += 1
 
-            # ✅ Generate Feedback
+            # Interview is over → Generate feedback
             with st.spinner("📝 Generating AI feedback..."):
                 feedback = generate_feedback(chat_history)
                 st.subheader("📋 Interview Feedback")
+                st.write(feedback)
                 text_to_speech(feedback)
-                st.success("✅ Feedback given.")
+                st.success("✅ Interview and feedback complete.")
