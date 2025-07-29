@@ -3,10 +3,11 @@ import pyttsx3
 
 def text_to_speech(text):
     engine = pyttsx3.init()
+    engine.setProperty('rate', 170)  
     engine.say(text)
     engine.runAndWait()
 
-def speech_to_text(timeout=10, phrase_time_limit=30, pause_threshold=1.2):
+def speech_to_text(timeout=10, phrase_time_limit=60, pause_threshold=1.5):
     recognizer = sr.Recognizer()
     recognizer.pause_threshold = pause_threshold  # Allow longer pauses
     with sr.Microphone() as source:

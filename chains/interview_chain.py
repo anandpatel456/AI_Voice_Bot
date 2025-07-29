@@ -11,7 +11,7 @@ os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 
 llm = ChatGroq(
     temperature=0.7,
-    model_name="llama-3.3-70b-versatile",  # Updated model name
+    model_name="llama-3.3-70b-versatile",  
 )
 
 memory = ConversationBufferMemory()
