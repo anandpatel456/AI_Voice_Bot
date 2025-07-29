@@ -6,3 +6,11 @@ pyaudio
 python-dotenv
 langchain
 langchain-groq==0.3.6
+
+
+
+
+pyaudio
+
+gtts
+pygame

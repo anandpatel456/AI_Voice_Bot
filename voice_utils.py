@@ -1,11 +1,39 @@
 import speech_recognition as sr
-import pyttsx3
+from gtts import gTTS
+from io import BytesIO
+import base64
+import streamlit as st
+import time
 
-def text_to_speech(text):
-    engine = pyttsx3.init()
-    engine.setProperty('rate', 170)  
-    engine.say(text)
-    engine.runAndWait()
+def estimate_speech_duration(text, wpm=180, speed=1.25):
+    """Estimate how long the TTS will take to speak, based on word count and speed."""
+    words = len(text.split())
+    return (words / wpm) * 60 / speed  # seconds
+
+def text_to_speech(text, lang="en", speed=1.50):
+    """Speak text using gTTS and wait until it's done before moving on"""
+    tts = gTTS(text=text, lang=lang)
+    mp3_fp = BytesIO()
+    tts.write_to_fp(mp3_fp)
+    mp3_fp.seek(0)
+    audio_data = mp3_fp.read()
+
+    b64 = base64.b64encode(audio_data).decode()
+    audio_html = f"""
+        <audio id="tts-audio" autoplay>
+            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+        </audio>
+        <script>
+            var audio = document.getElementById("tts-audio");
+            audio.playbackRate = {speed};
+        </script>
+    """
+    st.markdown(audio_html, unsafe_allow_html=True)
+
+    # Wait until the audio finishes (estimated duration)
+    est_duration = estimate_speech_duration(text, speed=speed)
+    time.sleep(est_duration + 0.5)
+
 
 def speech_to_text(timeout=10, phrase_time_limit=60, pause_threshold=1.5):
     recognizer = sr.Recognizer()

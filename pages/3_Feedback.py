@@ -16,5 +16,5 @@ else:
         text_to_speech("Here is your feedback.")
         text_to_speech(feedback)
     st.success("✅ Feedback generated successfully.")
-    time.sleep(2)  # Wait for 5 seconds
+    time.sleep(5)  # Wait for 5 seconds
     st.switch_page("Home.py")
