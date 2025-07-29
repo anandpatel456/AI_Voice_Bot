@@ -3,7 +3,7 @@ FROM python:3.10-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies (added gcc here)
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     portaudio19-dev \
@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libportaudio2 \
     libportaudiocpp0 \
     curl \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Python requirements first (for caching)
